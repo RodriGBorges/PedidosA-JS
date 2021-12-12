@@ -5,11 +5,15 @@ window.onload = () => {
   app.appendChild(container);
 
   // Aqui debemos agregar nuestro fetch
-
-
-
-  /** Codigo que debemos usar para mostrar los datos en el frontend
+  fetch("http://localhost:3031/api/movies")
+  .then(result => result.json())
+  .then(peliculas => {
     let data = peliculas.data;
+
+    if (!localStorage.getItem("favoritas")) {
+      const favoritas = []
+      localStorage.setItem('favoritas', JSON.stringify(favoritas))
+    }
 
     data.forEach((movie) => {
       const card = document.createElement("div");
@@ -24,15 +28,57 @@ window.onload = () => {
       const duracion = document.createElement("p");
       duracion.textContent = `Duración: ${movie.length}`;
 
+      const bttn = document.createElement("button");
+      bttn.innerText = "Favorita"
+      bttn.setAttribute('class', 'botonAgregar')
+      bttn.setAttribute('id', movie.id)
+
+      if(JSON.parse(localStorage.getItem('favoritas')).find(favorita => favorita.id === movie.id)) {
+        bttn.style.backgroundImage = 'none'
+        bttn.style.backgroundColor = 'gray'
+      }
+
+      bttn.addEventListener('click', (e) => {
+        e.preventDefault()
+
+        let favoritas = JSON.parse(localStorage.getItem('favoritas'));
+
+        if(!favoritas.find(favorita => favorita.id === parseInt(e.target.id))) {
+          favoritas.push(movie)
+          bttn.style.backgroundImage = 'none'
+          bttn.style.backgroundColor = 'gray'
+        } else {
+          favoritas = favoritas.filter(favorita => favorita.id !== parseInt(e.target.id))
+          bttn.style.backgroundImage = 'linear-gradient(120deg, #fbc2eb 0%, #a6c1ee 100%)'
+          bttn.style.backgroundColor = 'none'
+        }
+
+        localStorage.setItem('favoritas', JSON.stringify(favoritas))
+
+      })
+
       container.appendChild(card);
       card.appendChild(h1);
       card.appendChild(p);
+      
       if (movie.genre !== null) {
         const genero = document.createElement("p");
         genero.textContent = `Genero: ${movie.genre.name}`;
         card.appendChild(genero);
       }
-      card.appendChild(duracion);
+
+      if (movie.length != null) {
+        card.appendChild(duracion);
+      }
+
+      card.appendChild(bttn)
     });
+  })
+
+
+  /** Codigo que debemos usar para mostrar los datos en el frontend
+    let data = peliculas.data;
+
+    
   */
 };
