@@ -13,24 +13,25 @@ window.onload = () => {
         const rating = qs('#rating')
         const awards = qs('#awards')
         const releaseDate = qs('#release_date')
-        const duracion = qs('#length')
+        const length = qs('#length')
         const editar = qs('.editar')
         const crear = qs('.crear')
         const eliminar = qs('.eliminar')
         
 
         let pelicula
+        let find
 
         title.addEventListener('input', (e) => {
             pelicula = e.target.value
 
-            const find = peliculas.data.find(peli => peli.title.toLowerCase() === pelicula.toLowerCase())
+            find = peliculas.data.find(peli => peli.title.toLowerCase() === pelicula.toLowerCase())
             if (find !== undefined) {
                 rating.setAttribute('value', find.rating)
                 awards.setAttribute('value', find.awards)
+                length.setAttribute('value', find.length)
                 const date = find.release_date.split("T")[0];
                 releaseDate.setAttribute('value', date)
-                duracion.setAttribute('value', find.length)
             }
         })
 
@@ -57,6 +58,7 @@ window.onload = () => {
                     body: JSON.stringify(body)
                 })
                 .then(response => {
+                    console.log(response)
                     response.json()
                 })
                 .then(result => {
@@ -92,6 +94,10 @@ window.onload = () => {
             .then(response => response.json())
             .then(response => {
                 console.log(response)
+                const resultado = document.createElement('h2')
+                const body = qs('body')
+                resultado.innerText = "Se creó la película correctamente"
+                body.appendChild(resultado)
             })
         })
 
@@ -107,6 +113,10 @@ window.onload = () => {
             .then(response => response.json())
             .then(response => {
                 console.log(response)
+                const resultado = document.createElement('h2')
+                const body = qs('body')
+                resultado.innerText = "Se eliminó la película correctamente"
+                body.appendChild(resultado)
             })
         })
 
